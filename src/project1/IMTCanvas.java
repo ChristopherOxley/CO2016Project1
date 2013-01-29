@@ -30,7 +30,7 @@ public class IMTCanvas extends Canvas {
             
 	}catch(Exception ex){
         
-        
+        // Used to load image within a netbeans project.
             try{
                 
             i = ImageIO.read(new File("src/project1/picture.jpg")).

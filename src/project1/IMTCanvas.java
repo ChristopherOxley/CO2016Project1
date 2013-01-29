@@ -25,9 +25,26 @@ public class IMTCanvas extends Canvas {
 		getSubimage(100,0,400,400);
 	    tti = ImageIO.read(new File("picture.jpg")).
 		getSubimage(100,0,400,400);
-	}
-
-	catch (Exception e) {System.out.println(e.getMessage());}
+            
+            
+            
+	}catch(Exception ex){
+        
+        
+            try{
+                
+            i = ImageIO.read(new File("src/project1/picture.jpg")).
+		getSubimage(100,0,400,400);
+	    ti = ImageIO.read(new File("src/project1/picture.jpg")).
+		getSubimage(100,0,400,400);
+	    tti = ImageIO.read(new File("src/project1/picture.jpg")).
+		getSubimage(100,0,400,400);
+                
+            }catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        }  
+        
 	reset();
     } // IMTCanvas constructor
 

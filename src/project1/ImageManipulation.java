@@ -75,15 +75,57 @@ public class ImageManipulation {
 			      int n,
 				 int x, int y,int size) {
 					 
-	BufferedImage temp=new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
-        (temp.getGraphics()).drawImage(image,0,0,image.getWidth(), image.getHeight(),null );
+        BufferedImage temp = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
+        (temp.getGraphics()).drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
 
 
-	// ... your code goes here
-	
+        // ... your code goes here
+        for (int iy = y - size; iy < y + size; iy++) {
+            for (int ix = x - size; ix < x + size; ix++) {
+
+                try {
+
+                    int pixel = temp.getRGB(ix, iy);
+                    
+                    double distance = distance(x,y,ix,iy);
+                    
+                    if (distance >= n){
+                    
+                    double angle = 2*Math.PI*(1-(distance-n)/(size-n));
+                    
+                    double newX = (x-ix)*Math.cos(-angle)-(y-iy)*Math.sin(-angle);
+                    
+                    double newY = (x-ix)*Math.sin(-angle)+(y-iy)*Math.cos(-angle);
+                    
+                    
+                   
+                    if(distance(x,y,newX+x,newY+y) <= size ){
+                        image.setRGB((int)newX + x, (int)newY + y, pixel);
+                        
+                        // When we shift a pixel there are some areas that are not changed
+                        // to make te effect look better, we also set the pixel to the
+                        // top, bottom, left and right of the one to change to help blend
+                        // the image 
+                        image.setRGB((int)newX + x+1, (int)newY + y, pixel);
+                        image.setRGB((int)newX + x-1, (int)newY + y, pixel);
+                        image.setRGB((int)newX + x, (int)newY + y-1, pixel);
+                        image.setRGB((int)newX + x, (int)newY + y+1, pixel);
+
+                    }
+                    }
+                    
+                } catch (Exception e) {
+                }
+            }
+        }
+        
+        
+        
     }
-    
 
+    private static double distance(double fromX, double fromY, double toX, double toY){
+        return Math.sqrt((toX-fromX)*(toX-fromX)+(toY-fromY)*(toY-fromY));
+    }
 
 
 

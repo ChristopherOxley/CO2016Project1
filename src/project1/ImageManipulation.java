@@ -163,18 +163,90 @@ public class ImageManipulation {
     * @param y y-coordinate of the centre of the rectangle
     * @param size half the length/width of the square
     *
-    */
+
+     */
     static public void phaseShift(BufferedImage image, int n,
-			     int x, int y, int size) {
+            int x, int y, int size) {
 
-	// creates a copy of the image called temp
-        BufferedImage temp=new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
-        (temp.getGraphics()).drawImage(image,0,0,image.getWidth(), image.getHeight(),null );
+        // creates a copy of the image called temp
+        BufferedImage temp = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
+        (temp.getGraphics()).drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
 
-	// ... your code goes here
-	
-	
-    }
+        // ... your code goes here
 
 
+        for (int iy = y-size-n; iy < y+size+n; iy++) {
+            for (int ix = x-size-n; ix < x+size+n; ix++) {
+
+                    try{
+                        
+                    // Source pixel and color component
+                    int sPixel = temp.getRGB(ix, iy);
+                    int sBlue = (sPixel & 0xff);
+                    int sGreen = (sPixel & 0xff00) >> 8;
+                    int sRed = (sPixel & 0xff0000) >> 16;
+
+
+                    // Destination pixel for red component
+                    int drPixel = temp.getRGB(ix + n, iy);
+                    int drBlue = (drPixel & 0xff);
+                    int drGreen = (drPixel & 0xff00) >> 8;
+                    int drRed = (drPixel & 0xff0000) >> 16;
+
+                    drPixel = drBlue | drGreen << 8 | sRed << 16;
+
+                    if(ix + n > x-size && ix +n < x+size && iy>y-size && iy<y+size){
+                    image.setRGB(ix + n, iy, drPixel);
+                    }
+
+
+
+               
+                }catch(Exception e){}
+            }
+        }
+    
+    
+    
+  
+        BufferedImage temp2 = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
+        (temp2.getGraphics()).drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
+
+
+        for (int iy = y-size-n; iy < y+size+n; iy++) {
+            for (int ix = x-size-n; ix < x+size+n; ix++) {
+
+                try{
+                    // Source pixel and color component
+                    int sPixel = temp2.getRGB(ix, iy);
+                    int sBlue = (sPixel & 0xff);
+                    int sGreen = (sPixel & 0xff00) >> 8;
+                    int sRed = (sPixel & 0xff0000) >> 16;
+
+
+
+
+                    // Destination pixel for green component
+
+                    int dgPixel = temp2.getRGB(ix, iy + n);
+                    int dgBlue = (dgPixel & 0xff);
+                    int dgGreen = (dgPixel & 0xff00) >> 8;
+                    int dgRed = (dgPixel & 0xff0000) >> 16;
+
+                    dgPixel = dgBlue | sGreen << 8 | dgRed << 16;
+
+                    
+                    
+                    if(ix  > x-size && ix < x+size && iy + n>y-size && iy +n<y+size){
+                    image.setRGB(ix, iy + n, dgPixel);
+                    }
+
+
+
+                }catch(Exception e){}
+
+            }
+        }
+}
+     
 } // ImageManipulation

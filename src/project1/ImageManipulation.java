@@ -174,79 +174,38 @@ public class ImageManipulation {
 
         // ... your code goes here
 
+        int imageWidth = temp.getWidth();
+        int imageHeight = temp.getHeight();
 
-        for (int iy = y-size-n; iy < y+size+n; iy++) {
-            for (int ix = x-size-n; ix < x+size+n; ix++) {
-
-                    try{
-                        
-                    // Source pixel and color component
-                    int sPixel = temp.getRGB(ix, iy);
-                    int sBlue = (sPixel & 0xff);
-                    int sGreen = (sPixel & 0xff00) >> 8;
-                    int sRed = (sPixel & 0xff0000) >> 16;
+        for (int iy = y - size - n; iy < y + size + n; iy++) {
+            for (int ix = x - size - n; ix < x + size + n; ix++) {
 
 
-                    // Destination pixel for red component
-                    int drPixel = temp.getRGB(ix + n, iy);
-                    int drBlue = (drPixel & 0xff);
-                    int drGreen = (drPixel & 0xff00) >> 8;
-                    int drRed = (drPixel & 0xff0000) >> 16;
+                // Boundary Checking to ensure we dont get a pixel outside of the 
+                // bounds of the image.
+                if (ix > n && ix < imageWidth - n && iy > n && iy < imageHeight - n) {
 
-                    drPixel = drBlue | drGreen << 8 | sRed << 16;
+                    // Source pixel and required color component from the left
+                    int sPixel1 = temp.getRGB(ix - n, iy);
+                    int sRed = (sPixel1 & 0xff0000) >> 16;
 
-                    if(ix + n > x-size && ix +n < x+size && iy>y-size && iy<y+size){
-                    image.setRGB(ix + n, iy, drPixel);
-                    }
+                    // Source pixel and required color component from the right
+                    int sPixel2 = temp.getRGB(ix, iy - n);
+                    int sBlue = (sPixel2 & 0xff);
 
 
+                    // Destination pixel, get the green component to recreate the 
+                    // new pixel with the unchanged green and offset red and blue
+                    int dPixel = temp.getRGB(ix, iy);
+                    int dGreen = (dPixel & 0xff00) >> 8;
 
-               
-                }catch(Exception e){}
+                    // Create the new pixel 
+                    int newPixel = sBlue | dGreen << 8 | sRed << 16;
+
+                    // Set the new pixel to the current position in the image.
+                    image.setRGB(ix, iy, newPixel);
+                }
             }
         }
-    
-    
-    
-  
-        BufferedImage temp2 = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
-        (temp2.getGraphics()).drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
-
-
-        for (int iy = y-size-n; iy < y+size+n; iy++) {
-            for (int ix = x-size-n; ix < x+size+n; ix++) {
-
-                try{
-                    // Source pixel and color component
-                    int sPixel = temp2.getRGB(ix, iy);
-                    int sBlue = (sPixel & 0xff);
-                    int sGreen = (sPixel & 0xff00) >> 8;
-                    int sRed = (sPixel & 0xff0000) >> 16;
-
-
-
-
-                    // Destination pixel for green component
-
-                    int dgPixel = temp2.getRGB(ix, iy + n);
-                    int dgBlue = (dgPixel & 0xff);
-                    int dgGreen = (dgPixel & 0xff00) >> 8;
-                    int dgRed = (dgPixel & 0xff0000) >> 16;
-
-                    dgPixel = dgBlue | sGreen << 8 | dgRed << 16;
-
-                    
-                    
-                    if(ix  > x-size && ix < x+size && iy + n>y-size && iy +n<y+size){
-                    image.setRGB(ix, iy + n, dgPixel);
-                    }
-
-
-
-                }catch(Exception e){}
-
-            }
-        }
-}
-     
+    }
 } // ImageManipulation

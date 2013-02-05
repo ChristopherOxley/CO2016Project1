@@ -72,57 +72,49 @@ public class ImageManipulation {
      * @param size half the length/width of the square
      */
     static public void spiral(BufferedImage image,
-			      int n,
-				 int x, int y,int size) {
-					 
+            int n,
+            int x, int y, int size) {
+
         BufferedImage temp = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
         (temp.getGraphics()).drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
 
+        // Get the dimensions of the image to reduce the amount of times we need to
+        // access the image dimensions when boundary checking.
+        int imageWidth = temp.getWidth();
+        int imageHeight = temp.getHeight();
 
-        // ... your code goes here
-        for (int iy = y - size; iy < y + size; iy++) {
-            for (int ix = x - size; ix < x + size; ix++) {
+        // Boundary Checking, if the mouse is too far to one side we do not show the
+        // spiral
+        if (x > size && y > size && x < imageWidth - size && y < imageHeight - size) {
 
-                try {
+            // Iterate over the area to affect
+            for (int iy = y - size; iy < y + size; iy++) {
+                for (int ix = x - size; ix < x + size; ix++) {
 
-                    int pixel = temp.getRGB(ix, iy);
-                    
-                    double distance = distance(x,y,ix,iy);
-                    
-                    if (distance >= n){
-                    
-                    double angle = 2*Math.PI*(1-(distance-n)/(size-n));
-                    
-                    double newX = (x-ix)*Math.cos(-angle)-(y-iy)*Math.sin(-angle);
-                    
-                    double newY = (x-ix)*Math.sin(-angle)+(y-iy)*Math.cos(-angle);
-                    
-                    
-                   
-                    if(distance(x,y,newX+x,newY+y) <= size ){
-                        image.setRGB((int)newX + x, (int)newY + y, pixel);
-                        
-                        // When we shift a pixel there are some areas that are not changed
-                        // to make te effect look better, we also set the pixel to the
-                        // top, bottom, left and right of the one to change to help blend
-                        // the image 
-                        image.setRGB((int)newX + x+1, (int)newY + y, pixel);
-                        image.setRGB((int)newX + x-1, (int)newY + y, pixel);
-                        image.setRGB((int)newX + x, (int)newY + y-1, pixel);
-                        image.setRGB((int)newX + x, (int)newY + y+1, pixel);
+                    // Get the distance between the current pixel and the mouse center
+                    double distance = distance(x, y, ix, iy);
 
+                    // only changes the pixels within a certain radius of the mouse
+                    // and n pixels away from the mouse.
+                    if (distance < size && distance > n) {
+
+                        // Get the angle between the 2 points
+                        double angle = 2 * Math.PI * (1 - (distance - n) / (size - n));
+
+                        // Calculate the pixel X and Y coords to move to the current position.
+                        double newX = (ix-x) * Math.cos(angle) - (y-iy) * Math.sin(angle);
+                        double newY = (ix-x) * Math.sin(angle) + (y-iy) * Math.cos(angle);
+
+                        // get the pixel and set it in its new position
+                        int sPixel = temp.getRGB((int) newX+x,  y-(int)newY);
+                        image.setRGB(ix, iy, sPixel);
                     }
-                    }
-                    
-                } catch (Exception e) {
                 }
             }
         }
-        
-        
-        
     }
 
+    // Seperate class method to calculate the distance between 2 points
     private static double distance(double fromX, double fromY, double toX, double toY){
         return Math.sqrt((toX-fromX)*(toX-fromX)+(toY-fromY)*(toY-fromY));
     }
@@ -174,6 +166,8 @@ public class ImageManipulation {
 
         // ... your code goes here
 
+        // Get the dimensions of the image to reduce the amount of times we need to
+        // access the image dimensions when boundary checking.
         int imageWidth = temp.getWidth();
         int imageHeight = temp.getHeight();
 
